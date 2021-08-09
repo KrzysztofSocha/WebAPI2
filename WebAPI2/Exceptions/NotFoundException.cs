@@ -5,8 +5,11 @@ using System.Threading.Tasks;
 
 namespace WebAPI2.Exceptions
 {
-    public class NotFoundExceptions
+    public class NotFoundException:Exception
     {
+        public NotFoundException(string message): base(message)
+        {
 
+        }
     }
 }

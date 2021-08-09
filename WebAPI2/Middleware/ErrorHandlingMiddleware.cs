@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using WebAPI2.Exceptions;
 
 namespace WebAPI2.Middleware
 {
@@ -20,6 +21,11 @@ namespace WebAPI2.Middleware
             try
             {
                 await next.Invoke(context);
+            }
+            catch(NotImplementedException notFoundExeception)
+            {
+                context.Response.StatusCode = 404;
+                await context.Response.WriteAsync(notFoundExeception.Message);
             }
             catch(Exception e)
             {

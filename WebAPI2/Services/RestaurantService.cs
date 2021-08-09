@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using NLog.Web;
 using Microsoft.Extensions.Logging;
+using WebAPI2.Exceptions;
 
 namespace WebAPI2.Services
 {
@@ -16,8 +17,8 @@ namespace WebAPI2.Services
         int CreateRestaurant(CreateRestaurantDto dto);
         IEnumerable<RestaurantDto> GetAll();
         RestaurantDto GetById(int id);
-        bool DeleteRestaurant(int id);
-        bool UpdateRestaurant(int id, UpdateRestaurantDto dto);
+        void DeleteRestaurant(int id);
+        void UpdateRestaurant(int id, UpdateRestaurantDto dto);
     }
 
     public class RestaurantService : IRestaurantService
@@ -36,8 +37,9 @@ namespace WebAPI2.Services
 
             if (restaurant is null)
             {
-                return null;
+                throw new NotFoundException("Restaurant not found");
             }
+            
             else
             {
                 var restaurantDto = _mapper.Map<RestaurantDto>(restaurant);
@@ -71,7 +73,7 @@ namespace WebAPI2.Services
 
         }
 
-        public bool DeleteRestaurant(int id)
+        public void DeleteRestaurant(int id)
         {
             _logger.LogError($"Restaurant with id: {id} DELETE");
 
@@ -80,24 +82,24 @@ namespace WebAPI2.Services
                .FirstOrDefault(r => r.restaurantId == id);
             if (restaurant is null)
             {
-                return false;
+                throw new NotFoundException("Restaurant not found");
             }
             else
             {
                 _dbContext.Restaurants.Remove(restaurant);
                 _dbContext.SaveChanges();
-                return true;
+                
             }
         }
 
-        public bool UpdateRestaurant(int id, UpdateRestaurantDto dto)
+        public void UpdateRestaurant(int id, UpdateRestaurantDto dto)
         {
             var restaurant = _dbContext
                .Restaurants
                .FirstOrDefault(r => r.restaurantId == id);
             if (restaurant is null)
             {
-                return false;
+                throw new NotFoundException("Restaurant not found");
             }
             else
             {
@@ -107,7 +109,7 @@ namespace WebAPI2.Services
 
                 
                 _dbContext.SaveChanges();
-                return true;
+                
             }
         }
     }
