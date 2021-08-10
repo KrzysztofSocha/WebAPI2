@@ -42,28 +42,21 @@ namespace WebAPI2.Controllers
                 // utworzenie kanału komunikacji
                 using (var channel = connection.CreateModel())
                 {
-                    channel.QueueDeclare(queue: "msgKey",
+                    channel.QueueDeclare(queue: "RestaurantKey",
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: null);
-
-
-
-                    string msg = restaurant.ToString();
+                    string msg = $"Nazwa: {restaurant.name}, Opis: {restaurant.descryption}";
                     var msgBody = Encoding.UTF8.GetBytes(msg);
-
                     channel.BasicPublish(exchange: "",
                     routingKey: "RestaurantKey",
                     basicProperties: null,
                     body: msgBody);
-
-
-
-
                 }
-                return Ok(restaurant);
+
             }
+            return Ok(restaurant);
         }
 
         [HttpPost]

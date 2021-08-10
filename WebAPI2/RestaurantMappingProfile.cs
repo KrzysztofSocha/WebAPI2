@@ -11,11 +11,11 @@ namespace WebAPI2
     {
         public RestaurantMappingProfile()
         {
-            //mapujemy z właściwości klasy Restaurant do klasy RestaurantDto
-            
+            //mapujemy z właściwości klasy Restaurant do klasy RestaurantDto            
             CreateMap<Restaurant, RestaurantDto>().ForMember(m => m.city, c => c.MapFrom(s => s.Address.city))
                 .ForMember(m => m.street, c => c.MapFrom(s => s.Address.street))
                 .ForMember(m => m.postalCode, c => c.MapFrom(s => s.Address.PostalCode));
+
             //takie same właściwości, mapowanie wykona się automatycznie
             CreateMap<Dish, DishDto>();
 
