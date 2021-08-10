@@ -8,8 +8,6 @@ using WebAPI2.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using WebAPI2.Services;
-using RabbitMQ.Client;
-using System.Text;
 
 namespace WebAPI2.Controllers
 {
@@ -35,27 +33,7 @@ namespace WebAPI2.Controllers
         public ActionResult<RestaurantDto> Get([FromRoute] int id)
         {
             var restaurant = _restaurantService.GetById(id);
-            var factory = new ConnectionFactory() { HostName = "localhost" };
-            // otwarcie połączenia
-            using (var connection = factory.CreateConnection())
-            {
-                // utworzenie kanału komunikacji
-                using (var channel = connection.CreateModel())
-                {
-                    channel.QueueDeclare(queue: "RestaurantKey",
-                    durable: false,
-                    exclusive: false,
-                    autoDelete: false,
-                    arguments: null);
-                    string msg = $"Nazwa: {restaurant.name}, Opis: {restaurant.descryption}";
-                    var msgBody = Encoding.UTF8.GetBytes(msg);
-                    channel.BasicPublish(exchange: "",
-                    routingKey: "RestaurantKey",
-                    basicProperties: null,
-                    body: msgBody);
-                }
-
-            }
+            _restaurantService.CreateMessage(restaurant);
             return Ok(restaurant);
         }
 

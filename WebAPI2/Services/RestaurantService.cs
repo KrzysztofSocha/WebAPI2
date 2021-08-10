@@ -9,6 +9,9 @@ using AutoMapper;
 using NLog.Web;
 using Microsoft.Extensions.Logging;
 using WebAPI2.Exceptions;
+using RabbitMQ.Client;
+using System.Text;
+
 
 namespace WebAPI2.Services
 {
@@ -19,6 +22,7 @@ namespace WebAPI2.Services
         RestaurantDto GetById(int id);
         void DeleteRestaurant(int id);
         void UpdateRestaurant(int id, UpdateRestaurantDto dto);
+        void CreateMessage(RestaurantDto dto);
     }
 
     public class RestaurantService : IRestaurantService
@@ -110,6 +114,31 @@ namespace WebAPI2.Services
                 
                 _dbContext.SaveChanges();
                 
+            }
+        }
+
+        public void CreateMessage(RestaurantDto restaurant)
+        {
+            var factory = new ConnectionFactory() { HostName = "localhost" };
+            // otwarcie połączenia
+            using (var connection = factory.CreateConnection())
+            {
+                // utworzenie kanału komunikacji
+                using (var channel = connection.CreateModel())
+                {
+                    channel.QueueDeclare(queue: "RestaurantKey",
+                    durable: false,
+                    exclusive: false,
+                    autoDelete: false,
+                    arguments: null);
+                    string msg = $"Nazwa: {restaurant.name}, Opis: {restaurant.descryption}";
+                    var msgBody = Encoding.UTF8.GetBytes(msg);
+                    channel.BasicPublish(exchange: "",
+                    routingKey: "RestaurantKey",
+                    basicProperties: null,
+                    body: msgBody);
+                }
+
             }
         }
     }
