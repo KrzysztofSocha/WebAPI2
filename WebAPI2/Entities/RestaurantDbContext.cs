@@ -42,7 +42,7 @@ namespace WebAPI2.Entities
             modelBuilder.Entity<User>()
                 .Property(u => u.FirstName)
                 .IsRequired();
-            
+
             modelBuilder.Entity<User>()
                 .Property(u => u.Email)
                 .IsRequired();
@@ -55,9 +55,7 @@ namespace WebAPI2.Entities
                 .Property(u => u.RoleID)
                 .IsRequired();
 
-            modelBuilder.Entity<Role>()
-                .Property(r => r.RoleId)
-                .IsRequired();
+            
 
             modelBuilder.Entity<Role>()
                 .Property(r => r.Name)

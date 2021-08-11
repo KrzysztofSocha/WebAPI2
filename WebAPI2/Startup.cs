@@ -13,6 +13,11 @@ using System.Threading.Tasks;
 using WebAPI2.Entities;
 using WebAPI2.Services;
 using WebAPI2.Middleware;
+using Microsoft.AspNetCore.Identity;
+using FluentValidation;
+using WebAPI2.Models.Validators;
+using WebAPI2.Models;
+using FluentValidation.AspNetCore;
 
 namespace WebAPI2
 {
@@ -29,7 +34,7 @@ namespace WebAPI2
         public void ConfigureServices(IServiceCollection services)
         {
             
-            services.AddControllers();
+            services.AddControllers().AddFluentValidation();
             services.AddDbContext<RestaurantDbContext>();
             services.AddScoped<RestaurantSeeder>();
             services.AddAutoMapper(this.GetType().Assembly);
@@ -37,6 +42,9 @@ namespace WebAPI2
             services.AddScoped<ErrorHandlingMiddleware>();
             services.AddScoped<RequestTimeMiddleware>();
             services.AddSwaggerGen();
+            services.AddScoped<IAccountService, AccountService >();
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

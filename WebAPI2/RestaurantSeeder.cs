@@ -20,7 +20,7 @@ namespace WebAPI2
                     _dbContext.Restaurants.AddRange(restaurants);
                     _dbContext.SaveChanges();
                 }
-                if (!_dbContext.Users.Any())
+                if (!_dbContext.Roles.Any())
                 {
                     var roles = GetRoles();
                     _dbContext.Roles.AddRange(roles);
