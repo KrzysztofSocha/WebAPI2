@@ -22,6 +22,11 @@ namespace WebAPI2.Middleware
             {
                 await next.Invoke(context);
             }
+            catch (BadRequestException badRequest)
+            {
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsync(badRequest.Message);
+            }
             catch(NotImplementedException notFoundExeception)
             {
                 context.Response.StatusCode = 404;

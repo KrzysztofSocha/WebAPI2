@@ -8,11 +8,13 @@ using WebAPI2.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using WebAPI2.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebAPI2.Controllers
 {
     [Route("api/restaurant")]
     [ApiController]
+    [Authorize]
     public class RestaurantController : ControllerBase
     {
         private readonly IRestaurantService _restaurantService;
@@ -23,6 +25,9 @@ namespace WebAPI2.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy ="HasNationality")]//każdy kto ma wpisaną narodowość ma dostęp do tej akcji
+        //polityka zdefiniowana w klasie satrtup
+        //[AllowAnonymous]
         public ActionResult<IEnumerable<RestaurantDto>> GetAll()
         {
             var restaurantsDtos = _restaurantService.GetAll();
@@ -38,6 +43,8 @@ namespace WebAPI2.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles ="Admin")]
+        [Authorize(Roles ="Manager")]
         public ActionResult CreateRestaurant([FromBody] CreateRestaurantDto dto)
         {            
             var restaurantId = _restaurantService.CreateRestaurant(dto);
